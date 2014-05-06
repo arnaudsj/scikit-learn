@@ -119,6 +119,14 @@ def _check_clf_targets(y_true, y_pred):
     # We can't have more than one value on y_type => The set is no more needed
     y_type = y_type.pop()
 
+    # Patch to handle multiclass-multioutput evaluation as absolute acc
+
+    #TODO: come up with way to combine and label each reasponse
+    if y_type == "multiclass-multioutput":
+        y_true = map(lambda x: ("%i-" * x.shape[0]) % tuple(x), y_true)
+        y_pred = map(lambda x: ("%i-" * x.shape[0]) % tuple(x), y_pred)
+        y_type = "multiclass"
+
     # No metrics support "multiclass-multioutput" format
     if (y_type not in ["binary", "multiclass", "multilabel-indicator",
                        "multilabel-sequences"]):
